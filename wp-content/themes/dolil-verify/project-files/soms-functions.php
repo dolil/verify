@@ -258,7 +258,7 @@ function add_extra_tablenav($post_type){
 }
 
 
-add_filter( 'parse_query', 'prefix_parse_filter' );
+//add_filter( 'parse_query', 'prefix_parse_filter' );
 function  prefix_parse_filter($query) {
    global $pagenow;
    $current_page = isset( $_GET['post_type'] ) ? $_GET['post_type'] : '';
