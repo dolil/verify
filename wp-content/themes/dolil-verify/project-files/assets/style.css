@@ -1,0 +1,67 @@
+
+body {
+    font-family: "Tiro Bangla", serif;
+}
+
+#application-passwords-section {
+    display: none !important;
+}
+
+/* Container Page Styles
+-------------------------------------------------------	*/
+
+
+/* Home Page Styles
+-------------------------------------------------------	*/
+.main-features-card-list .card {
+    padding: 0;
+}
+
+.main-features-card-list .card-header {
+    background-color: #d7dadf;
+    padding-bottom: 15px;
+    padding-top: 15px;
+}
+
+.main-features-card-list .card-header .h4, .main-features-card-list .card-header h4 {
+    font-size: 18px;
+    margin-bottom: 0;
+}
+
+.main-features-card-list .list-group-item {
+    background-color: #fff;
+    display: block;
+    padding: .75rem 1.25rem;
+    position: relative;
+    margin-bottom: 0;
+}
+
+.main-features-card-list .card .list-group-item a {
+    /* background-color: initial; */
+    color: #444;
+    /* font-size: 20px; */
+    text-decoration: none;
+}
+
+/* RS Land Page Styles
+-------------------------------------------------------	*/
+
+
+.post-type-restricted_land #titlediv #title {
+    padding: 10px 8px;
+    font-size: 1.4em;
+    height: auto;
+    margin: 0;
+    background-color: #f5f5f5;
+    pointer-events: none;
+    border: 0;
+}
+
+.post-type-restricted_land #titlewrap {
+    display: none;
+}
+
+.rs-land-warpper {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 32px;
+}
