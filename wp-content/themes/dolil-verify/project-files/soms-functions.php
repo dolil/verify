@@ -302,7 +302,7 @@ echo get_field( '_restrcited_land_type', $post_id );
 }
 if ( $column_name == 'custom-two' ) {
 // Display an ACF field
-echo get_field( '_deed_code', $post_id );
+echo get_field( '_deed_year', $post_id ) . get_field( '_deed_number', $post_id );
 }
 if ( $column_name == 'custom-three' ) {
 // Display an ACF field
@@ -339,3 +339,4 @@ echo get_field( '_deed_comments', $post_id );
 }, 10, 2 );
 
 
+//
