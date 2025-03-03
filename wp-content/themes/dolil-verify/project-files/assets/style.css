@@ -7,6 +7,14 @@ body {
     display: none !important;
 }
 
+.tablenav .actions input[type=text] {
+    margin-right: 6px;
+}
+
+.post-type-restricted_land .search-box {
+    display: none;
+}
+
 /* Container Page Styles
 -------------------------------------------------------	*/
 

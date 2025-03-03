@@ -106,7 +106,7 @@ function modify_your_post_title( $data )
   if($data['post_type'] == 'restricted_land') {
 
     $id = get_the_ID();
-    $title = 'Dolil-' . $id;
+    $title = 'D-' . $id;
     $data['post_title'] =  $title ; //Updates the post title to your new title.
   }
   return $data; // Returns the modified data.
@@ -193,6 +193,7 @@ if ( ! function_exists( 'wpse65613_remove_a' ) ) {
         ?>
         <script type="text/javascript">
             jQuery('table.wp-list-table a.row-title').contents().unwrap();
+			jQuery("#post-query-submit").val("Search");
         </script>
         <?php
     }
@@ -258,7 +259,7 @@ function add_extra_tablenav($post_type){
 }
 
 
-//add_filter( 'parse_query', 'prefix_parse_filter' );
+add_filter( 'parse_query', 'prefix_parse_filter' );
 function  prefix_parse_filter($query) {
    global $pagenow;
    $current_page = isset( $_GET['post_type'] ) ? $_GET['post_type'] : '';
@@ -277,9 +278,86 @@ function  prefix_parse_filter($query) {
 }
 
 
+/**
+ * Add Plot Number dropdowns to the List Tables
+ */
+add_action('restrict_manage_posts', 'add_extra_tablenav_plot');
+function add_extra_tablenav_plot($post_type){
+    
+    global $wpdb;
+    
+    /** Ensure this is the correct Post Type*/
+    if($post_type !== 'restricted_land')
+        return;
+    
+    /** Grab the results from the DB */
+    $query = $wpdb->prepare('
+        SELECT DISTINCT pm.meta_value FROM %1$s pm
+        LEFT JOIN %2$s p ON p.ID = pm.post_id
+        WHERE pm.meta_key = "%3$s" 
+        AND p.post_status = "%4$s" 
+        AND p.post_type = "%5$s"
+        ORDER BY "%6$s"',
+        $wpdb->postmeta,
+        $wpdb->posts,
+        '_plot_number', 		// Your meta key - change as required
+        'publish',          // Post status - change as required
+        $post_type,
+        '_plot_number'
+    );
+    $results = $wpdb->get_col($query);
+    
+    /** Ensure there are options to show */
+    if(empty($results))
+        return;
+
+    // get selected option if there is one selected
+    if (isset( $_GET['plot-number'] ) && $_GET['plot-number'] != '') {
+        $selectedName = $_GET['plot-number'];
+    } else {
+        $selectedName = -1;
+    }
+    
+    /** Grab all of the options that should be shown */
+    $options[] = sprintf('<option value="-1">%1$s</option>', __('All Plots', 'your-text-domain'));
+    foreach($results as $result) :
+        if ($result == $selectedName) {
+            $options[] = sprintf('<option value="%1$s" selected>%2$s</option>', esc_attr($result), $result);
+        } else {
+            $options[] = sprintf('<option value="%1$s">%2$s</option>', esc_attr($result), $result);
+        }
+    endforeach;
+
+    /** Output the dropdown menu */
+	echo '<input type="text" id="plot-number" name="plot-number" placeholder="দাগ নম্বর" required>';
+   // echo '<select class="" id="plot-number" name="plot-number">';
+
+}
 
 
-// Add custom admin columns for your WordPress custom post type
+add_filter( 'parse_query', 'prefix_parse_filter_plot' );
+function  prefix_parse_filter_plot($query) {
+   global $pagenow;
+   $current_page = isset( $_GET['post_type'] ) ? $_GET['post_type'] : '';
+   
+   if ( is_admin() && 
+     'restricted_land' == $current_page &&
+     'edit.php' == $pagenow && 
+      isset( $_GET['plot-number'] ) && 
+      $_GET['plot-number'] != '' ) {
+   
+    $plot_number                  = $_GET['plot-number'];
+    $query->query_vars['meta_key']     = '_plot_number';
+    $query->query_vars['meta_value']   = $plot_number;
+    $query->query_vars['meta_compare'] = 'LIKE';
+  }
+}
+
+
+
+/**
+ * Add custom admin columns for your WordPress custom post type
+ */
 $post_type = 'restricted_land';
 // Register the columns.
 add_filter( "manage_{$post_type}_posts_columns", function ( $defaults ) {
@@ -314,7 +392,11 @@ echo get_field( '_deed_seller', $post_id );
 }
 if ( $column_name == 'custom-five' ) {
 // Display an ACF field
-echo get_field( '_mouza_name', $post_id );
+$mouza_name = get_field_object( '_mouza_name', $post_id );
+$mouza_name_value = $mouza_name['value'];
+$mouza_name_label = $mouza_name['choices'][ $mouza_name_value ];
+echo esc_html($mouza_name_label); 
+//echo get_field( '_mouza_name', $post_id );
 }
 if ( $column_name == 'custom-six' ) {
 // Display an ACF field
